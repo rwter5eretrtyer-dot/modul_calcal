@@ -1,0 +1,30 @@
+// Учебная копия контроллера ДО исправления (НЕ включается в сборку).
+// В исходном задании эта строка намеренно содержит ошибку: total *= 5;
+
+using BudgetCalculator.Api.Models;
+using Microsoft.AspNetCore.Mvc;
+
+namespace BudgetCalculator.Api.Controllers;
+
+[ApiController]
+[Route("api/budget")]
+public sealed class BudgetController : ControllerBase
+{
+    [HttpPost("calculate")]
+    public IActionResult Calculate([FromBody] BudgetRequest request)
+    {
+        if (request.Days <= 0)
+        {
+            return BadRequest("Количество дней должно быть больше нуля.");
+        }
+
+        var total = request.DailyCost * request.Days;
+
+        if (request.IncludeInsurance)
+        {
+            total *= 5; // БАГ: 500% от суммы вместо +5%.
+        }
+
+        return Ok(new { TotalAmount = total });
+    }
+}
